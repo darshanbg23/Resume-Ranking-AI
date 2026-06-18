@@ -1,0 +1,21 @@
+.DS_Store
+node_modules
+dist
+dist-ssr
+*.local
+.env
+
+# IDE specific files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# OS files
+Thumbs.db
+
+# Build artifacts
+*.tsbuildinfo
