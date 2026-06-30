@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PageHeader from '@components/PageHeader';
 import StatsCard from '@components/StatsCard';
 import { useAuth } from '@context/AuthContext';
-import { Work, People, TrendingUp, EventNote, Add, Notifications as NotifIcon } from '@mui/icons-material';
+import { Work, People, TrendingUp, EventNote, Add, Notifications as NotifIcon, FindInPage, EmojiEvents, BarChart } from '@mui/icons-material';
 import apiClient from '../../services/api';
 
 interface RecruiterStats {
@@ -64,11 +64,10 @@ export const RecruiterDashboard: React.FC = () => {
           setRecentNotifs(notifsRes.data.data.slice(0, 5));
         }
 
-        // Fetch pipeline counts from all jobs' applicants
+        // Fetch pipeline counts from recruiter's own jobs
         try {
-          const jobsRes = await apiClient.get('/jobs/');
-          const jobs = jobsRes.data.data || [];
-          const myJobs = jobs.filter((j: any) => j.posted_by_id === user?.id);
+          const jobsRes = await apiClient.get('/jobs/my/');
+          const myJobs = jobsRes.data.data || [];
 
           let counts: PipelineCounts = { applied: 0, under_review: 0, shortlisted: 0, interview_scheduled: 0, selected: 0 };
           for (const job of myJobs) {
@@ -196,17 +195,16 @@ export const RecruiterDashboard: React.FC = () => {
             <h2 className="section-header mb-4">Quick Actions</h2>
             <div className="space-y-2">
               {[
-                { label: 'Screen Resumes', path: '/recruiter/screening', emoji: '📋' },
-                { label: 'View Rankings', path: '/recruiter/rankings', emoji: '⭐' },
-                { label: 'Schedule Interview', path: '/recruiter/interviews', emoji: '📅' },
-                { label: 'View Analytics', path: '/recruiter/analytics', emoji: '📊' },
+                { label: 'Screen Resumes', path: '/recruiter/screening', icon: <FindInPage style={{ fontSize: 16 }} /> },
+                { label: 'View Rankings', path: '/recruiter/rankings', icon: <EmojiEvents style={{ fontSize: 16 }} /> },
+                { label: 'View Analytics', path: '/recruiter/analytics', icon: <BarChart style={{ fontSize: 16 }} /> },
               ].map(item => (
                 <button
                   key={item.path}
                   onClick={() => navigate(item.path)}
-                  className="w-full text-left px-4 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#111111] transition-colors font-medium text-sm text-gray-700 dark:text-zinc-300"
+                  className="w-full text-left px-4 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-[#111111] transition-colors font-medium text-sm text-gray-700 dark:text-zinc-300 flex items-center gap-2"
                 >
-                  {item.emoji} {item.label}
+                  <span className="text-gray-400 dark:text-zinc-500">{item.icon}</span> {item.label}
                 </button>
               ))}
             </div>

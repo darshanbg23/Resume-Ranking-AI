@@ -33,7 +33,7 @@ export const RecruiterJobs: React.FC = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await apiClient.get('/jobs/');
+        const response = await apiClient.get('/jobs/my/');
         const data = Array.isArray(response.data) ? response.data : (response.data.data || []);
         setJobs(data);
       } catch (err) {

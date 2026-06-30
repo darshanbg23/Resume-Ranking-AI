@@ -12,38 +12,58 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-from django.conf.global_settings import CSRF_TRUSTED_ORIGINS
 import environ
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 env_file = os.path.join(BASE_DIR, ".env")
-environ.Env.read_env(env_file)
+if os.path.isfile(env_file):
+    environ.Env.read_env(env_file)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ne$llszj&x9q2kuun@vp6spn*9td-vi_30)y9o)o@lunz$usp^'
+SECRET_KEY = env(
+    "SECRET_KEY",
+    default="django-insecure-dev-only-change-me-in-production",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = [
-    "ats-resume.onrender.com",
+# Allowed hosts — read from env, fallback to common dev hosts
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[
     "localhost",
-    "*.onrender.com",
-    "ats-resume-y5mc.onrender.com",
     "127.0.0.1",
+])
+# Always allow Render hosts
+ALLOWED_HOSTS += [
+    "*.onrender.com",
 ]
-CSRF_TRUSTED_ORIGINS = ["https://ats-resume.onrender.com", "http://localhost", "https://*.onrender.com", "http://127.0.0.1"]
+
+# CSRF trusted origins
+_default_csrf = [
+    "http://localhost",
+    "http://127.0.0.1",
+    "http://localhost:5173",
+    "http://localhost:3000",
+]
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=_default_csrf)
+# Always trust Render
+CSRF_TRUSTED_ORIGINS += [
+    "https://*.onrender.com",
+]
+
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "None"  # Enables cookie across sites for HTTPS
-SESSION_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
+SESSION_COOKIE_SAMESITE = "None" if not DEBUG else "Lax"
+SESSION_COOKIE_SECURE = not DEBUG
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -61,6 +81,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -94,30 +115,44 @@ WSGI_APPLICATION = 'RESUME_RANKING_AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# Use SQLite for development, MySQL for production
-USE_MYSQL = env.bool("USE_MYSQL", default=False)
+# Priority: DATABASE_URL > MySQL > SQLite
+DATABASE_URL = env("DATABASE_URL", default="")
 
-if USE_MYSQL:
+if DATABASE_URL:
+    # Production: PostgreSQL via DATABASE_URL (Render, Heroku, etc.)
+    import dj_database_url
     DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.mysql",
-            "NAME": env("DATABASE_NAME"),
-            "USER": env("DATABASE_USER"),
-            "PASSWORD": env("DATABASE_PASSWORD"),
-            "HOST": env("DATABASE_HOST"),
-            "PORT": env("DATABASE_PORT"),
-            "OPTIONS": {
-                "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
-        }
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
 else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+    # Development: SQLite or MySQL
+    USE_MYSQL = env.bool("USE_MYSQL", default=False)
+
+    if USE_MYSQL:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.mysql",
+                "NAME": env("DATABASE_NAME"),
+                "USER": env("DATABASE_USER"),
+                "PASSWORD": env("DATABASE_PASSWORD"),
+                "HOST": env("DATABASE_HOST"),
+                "PORT": env("DATABASE_PORT"),
+                "OPTIONS": {
+                    "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+                },
+            }
         }
-    }
+    else:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
 
 
 # Password validation
@@ -162,6 +197,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+# WhiteNoise for serving static files in production
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -191,14 +229,19 @@ SIMPLE_JWT = {
 }
 
 # CORS Configuration
-CORS_ALLOWED_ORIGINS = [
+_default_cors = [
     "http://localhost:3000",
     "http://localhost:5173",
     "http://127.0.0.1:3000",
     "http://127.0.0.1:5173",
-    "https://localhost:3000",
-    "https://localhost:5173",
 ]
+
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=_default_cors)
+
+# Add FRONTEND_URL to CORS if provided
+FRONTEND_URL = env("FRONTEND_URL", default="")
+if FRONTEND_URL and FRONTEND_URL not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = [

@@ -38,6 +38,12 @@ export const AdminUsers: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState('all');
   const [deleteModal, setDeleteModal] = useState<{ show: boolean; user: UserItem | null }>({ show: false, user: null });
   const [deleting, setDeleting] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  const showFeedback = (type: 'success' | 'error', message: string) => {
+    setFeedback({ type, message });
+    setTimeout(() => setFeedback(null), 4000);
+  };
 
   const fetchUsers = async () => {
     try {
@@ -61,20 +67,25 @@ export const AdminUsers: React.FC = () => {
     try {
       await apiClient.put(`/admin/users/${user.id}/`, { is_active: !user.is_active });
       setUsers(prev => prev.map(u => u.id === user.id ? { ...u, is_active: !u.is_active } : u));
+      showFeedback('success', `${user.full_name} has been ${user.is_active ? 'blocked' : 'activated'} successfully.`);
     } catch (err) {
       console.error('Failed to update user:', err);
+      showFeedback('error', 'Failed to update user status. Please try again.');
     }
   };
 
   const handleDelete = async () => {
     if (!deleteModal.user) return;
+    const userName = deleteModal.user.full_name;
     setDeleting(true);
     try {
       await apiClient.delete(`/admin/users/${deleteModal.user.id}/`);
       setUsers(prev => prev.filter(u => u.id !== deleteModal.user!.id));
       setDeleteModal({ show: false, user: null });
+      showFeedback('success', `${userName} has been permanently deleted.`);
     } catch (err) {
       console.error('Failed to delete user:', err);
+      showFeedback('error', 'Failed to delete user. Please try again.');
     } finally {
       setDeleting(false);
     }
@@ -90,6 +101,18 @@ export const AdminUsers: React.FC = () => {
   return (
     <div className="space-y-6">
       <PageHeader title="User Management" description="Manage platform users, roles, and permissions." />
+
+      {/* Feedback Banner */}
+      {feedback && (
+        <div className={`animate-fadeInDown px-4 py-3 rounded-lg text-sm font-medium flex items-center justify-between ${
+          feedback.type === 'success'
+            ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/30'
+            : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/30'
+        }`}>
+          <span>{feedback.message}</span>
+          <button onClick={() => setFeedback(null)} className="text-current opacity-60 hover:opacity-100 ml-3">&times;</button>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

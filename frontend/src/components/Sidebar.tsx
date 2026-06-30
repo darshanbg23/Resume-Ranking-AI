@@ -3,8 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Dashboard, People, Analytics, Settings,
   Description, Search, Assignment,
-  Psychology, EventNote, ManageAccounts,
-  ScreenSearchDesktop, EmojiEvents, VideoCall,
+  Psychology, ManageAccounts,
+  ScreenSearchDesktop, EmojiEvents,
   Gavel, BarChart, Close,
   BusinessCenter,
 } from '@mui/icons-material';
@@ -44,12 +44,6 @@ const candidateNav: NavSection[] = [
     ],
   },
   {
-    title: 'SCHEDULE',
-    items: [
-      { path: '/candidate/interviews', label: 'Interviews', icon: EventNote },
-    ],
-  },
-  {
     items: [
       { path: '/candidate/settings', label: 'Settings', icon: Settings },
     ],
@@ -73,9 +67,8 @@ const recruiterNav: NavSection[] = [
     ],
   },
   {
-    title: 'SCHEDULE',
+    title: 'ANALYTICS',
     items: [
-      { path: '/recruiter/interviews', label: 'Interviews', icon: VideoCall },
       { path: '/recruiter/analytics', label: 'Analytics', icon: Analytics },
     ],
   },

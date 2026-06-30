@@ -160,10 +160,10 @@ def admin_user_detail(request, user_id):
 
         # Delete AI records if models exist
         if HAS_AI_MODELS:
-            ResumeJobMatch.objects.filter(user=target_user).delete()
-            SkillGapResult.objects.filter(user=target_user).delete()
-            InterviewQuestions.objects.filter(user=target_user).delete()
-            RoleRecommendation.objects.filter(user=target_user).delete()
+            ResumeJobMatch.objects.filter(resume__user=target_user).delete()
+            SkillGapResult.objects.filter(resume__user=target_user).delete()
+            InterviewQuestions.objects.filter(resume__user=target_user).delete()
+            RoleRecommendation.objects.filter(resume__user=target_user).delete()
 
         # Jobs created by this user — set created_by to null (soft delete)
         JobDescription.objects.filter(created_by=target_user).update(created_by=None)

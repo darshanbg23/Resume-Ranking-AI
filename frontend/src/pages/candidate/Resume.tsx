@@ -402,7 +402,7 @@ export const CandidateResume: React.FC = () => {
                     {selectedResume.projects_extracted.map((proj: any, idx: number) => (
                       <div key={idx} className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800/30">
                         <p className="text-xs font-medium text-gray-900 dark:text-white">
-                          {typeof proj === 'string' ? proj : proj.title || 'Untitled'}
+                          {typeof proj === 'string' ? proj : proj.name || proj.title || (proj.description ? proj.description.slice(0, 50) : 'Project')}
                         </p>
                         {proj.description && (
                           <p className="text-[10px] text-gray-500 dark:text-zinc-400 mt-0.5">{proj.description}</p>

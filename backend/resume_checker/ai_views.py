@@ -512,6 +512,11 @@ def ai_rankings(request, job_id):
     except JobDescription.DoesNotExist:
         return Response({'status': False, 'message': 'Job not found'}, status=status.HTTP_404_NOT_FOUND)
 
+    # Recruiter ownership check — recruiters can only rank their own jobs
+    user_groups = [g.name for g in request.user.groups.all()]
+    if 'recruiter' in user_groups and job.created_by != request.user:
+        return Response({'status': False, 'message': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+
     # Restrict to only resumes that have applied for this job
     applied_resume_ids = JobApplication.objects.filter(job=job).values_list('resume_id', flat=True)
     

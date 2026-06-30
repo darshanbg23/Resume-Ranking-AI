@@ -31,9 +31,11 @@ urlpatterns = [
     path("api/resumes/<int:resume_id>/analyze/", resume_views.user_resume_analyze, name="user_resume_analyze"),
 
     # ── Job Management ──────────────────────────────────────
+    path("api/jobs/my/", job_views.my_jobs, name="my_jobs"),
     path("api/jobs/", job_views.job_list, name="job_list"),
     path("api/jobs/<int:job_id>/", job_views.job_detail, name="job_detail"),
     path("api/jobs/<int:job_id>/applicants/", application_views.job_applicants, name="job_applicants"),
+    path("api/recruiter/analytics/", job_views.recruiter_analytics, name="recruiter_analytics"),
 
     # ── Application Management ──────────────────────────────
     path("api/applications/", application_views.applications, name="applications"),

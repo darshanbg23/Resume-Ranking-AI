@@ -6,7 +6,7 @@ import ProgressRing from '@components/ProgressRing';
 import { useAuth } from '@context/AuthContext';
 import {
   Assignment, EventNote, Psychology, Work, Description,
-  CloudUpload, Person, CheckCircle, ArrowForward,
+  CloudUpload, Person, CheckCircle, ArrowForward, RocketLaunch,
 } from '@mui/icons-material';
 import apiClient from '../../services/api';
 
@@ -84,7 +84,7 @@ export const CandidateDashboard: React.FC = () => {
       {/* Onboarding Banner — shown to new users */}
       {!loading && isNewUser && (
         <div className="card-base p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 border border-blue-200 dark:border-blue-800/30">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">🚀 Get Started</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2"><RocketLaunch style={{ fontSize: 20 }} className="text-blue-600" /> Get Started</h2>
           <p className="text-sm text-gray-600 dark:text-zinc-400 mb-4">Complete these steps to start using ResumeRank AI.</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[

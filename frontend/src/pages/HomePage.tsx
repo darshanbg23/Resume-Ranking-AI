@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, People, TrendingUp, FlashOn, Notifications as NotificationsIcon } from '@mui/icons-material';
+import { ArrowRight, People, TrendingUp, FlashOn, Notifications as NotificationsIcon, RocketLaunch } from '@mui/icons-material';
 import { useAuth } from '@context/AuthContext';
 
 export const HomePage: React.FC = () => {
@@ -36,7 +36,7 @@ export const HomePage: React.FC = () => {
       <section className="relative py-20 sm:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-medium mb-6">
-            🚀 AI-Powered Recruitment Platform
+            <RocketLaunch style={{ fontSize: 16 }} /> AI-Powered Recruitment Platform
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
             Smart Resume Screening

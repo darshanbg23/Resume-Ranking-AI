@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@context/AuthContext';
+import { Description, TrackChanges, BarChart, Notifications as NotifIcon } from '@mui/icons-material';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -32,22 +33,22 @@ export const LoginPage: React.FC = () => {
 
   const features = [
     {
-      icon: '📄',
+      icon: <Description style={{ fontSize: 22 }} className="text-blue-600" />,
       title: 'Smart Resume Parsing',
       desc: 'AI extracts skills, experience & education from your resume automatically.',
     },
     {
-      icon: '🎯',
+      icon: <TrackChanges style={{ fontSize: 22 }} className="text-blue-600" />,
       title: 'Job Matching',
       desc: 'Semantic AI matches your profile to the most relevant opportunities.',
     },
     {
-      icon: '📊',
+      icon: <BarChart style={{ fontSize: 22 }} className="text-blue-600" />,
       title: 'Candidate Ranking',
       desc: 'Get ranked against other applicants with transparent scoring.',
     },
     {
-      icon: '🔔',
+      icon: <NotifIcon style={{ fontSize: 22 }} className="text-blue-600" />,
       title: 'Real-time Updates',
       desc: 'Track your applications and get notified on status changes.',
     },
@@ -96,7 +97,7 @@ export const LoginPage: React.FC = () => {
                   key={i}
                   className="p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 transition-all duration-300 hover:border-blue-300 dark:hover:border-blue-800 hover:shadow-md group"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-3 text-xl group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
                     {feature.icon}
                   </div>
                   <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">{feature.title}</p>

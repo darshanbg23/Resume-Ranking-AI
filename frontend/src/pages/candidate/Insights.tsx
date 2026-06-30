@@ -4,7 +4,7 @@ import ProgressRing from '@components/ProgressRing';
 import EmptyState from '@components/EmptyState';
 import {
   TrendingUp, Lightbulb, Code, School, Work, CloudUpload, Analytics, Description,
-  Psychology, QuestionAnswer, WorkOutline, Person, Email, Phone,
+  Psychology, WorkOutline, Person, Email, Phone,
   CheckCircle, Cancel, AutoAwesome, Star
 } from '@mui/icons-material';
 import apiClient from '../../services/api';
@@ -45,11 +45,6 @@ interface SkillGapData {
   recommendations: string[];
 }
 
-interface InterviewQuestionsData {
-  technical_questions: string[];
-  behavioral_questions: string[];
-  role_specific_questions: string[];
-}
 
 interface RoleRecommendation {
   role: string;
@@ -70,8 +65,7 @@ export const CandidateInsights: React.FC = () => {
   const [skillGap, setSkillGap] = useState<SkillGapData | null>(null);
   const [skillGapLoading, setSkillGapLoading] = useState(false);
 
-  const [interviewQuestions, setInterviewQuestions] = useState<InterviewQuestionsData | null>(null);
-  const [questionsLoading, setQuestionsLoading] = useState(false);
+
 
   const [roleRecommendations, setRoleRecommendations] = useState<RoleRecommendation[]>([]);
   const [rolesLoading, setRolesLoading] = useState(false);
@@ -142,22 +136,7 @@ export const CandidateInsights: React.FC = () => {
     }
   };
 
-  const handleInterviewQuestions = async () => {
-    if (!selectedResumeId) return;
-    setQuestionsLoading(true);
-    try {
-      const res = await apiClient.post(`/ai/interview-questions/${selectedResumeId}/`, {
-        job_id: selectedJobId || undefined,
-      });
-      if (res.data.status) {
-        setInterviewQuestions(res.data.data);
-      }
-    } catch (err) {
-      console.error('Interview questions failed:', err);
-    } finally {
-      setQuestionsLoading(false);
-    }
-  };
+
 
   const handleRoleRecommendations = async () => {
     if (!selectedResumeId) return;
@@ -237,7 +216,7 @@ export const CandidateInsights: React.FC = () => {
             <label className="text-sm font-medium text-gray-600 dark:text-zinc-400">Resume:</label>
             <select
               value={selectedResumeId || ''}
-              onChange={(e) => { setSelectedResumeId(Number(e.target.value)); setSkillGap(null); setInterviewQuestions(null); setRoleRecommendations([]); }}
+              onChange={(e) => { setSelectedResumeId(Number(e.target.value)); setSkillGap(null); setRoleRecommendations([]); }}
               className="input-base max-w-xs text-sm"
             >
               {analyzedResumes.map(r => (
@@ -442,7 +421,7 @@ export const CandidateInsights: React.FC = () => {
                   {selectedResume!.projects_extracted && selectedResume!.projects_extracted.length > 0 ? (
                     <div className="space-y-3">
                       {selectedResume!.projects_extracted.map((proj: any, idx: number) => {
-                        const title = typeof proj === 'string' ? proj : proj.title || 'Untitled Project';
+                        const title = typeof proj === 'string' ? proj : proj.name || proj.title || (proj.description ? proj.description.slice(0, 50) : 'Project');
                         const description = typeof proj === 'object' ? proj.description : '';
                         return (
                           <div key={idx} className="p-3 rounded-lg bg-purple-50 dark:bg-purple-900/10 border border-purple-200 dark:border-purple-800/30">
@@ -610,7 +589,7 @@ export const CandidateInsights: React.FC = () => {
                           {skillGap.missing_skills.map((s, i) => (
                             <span key={i} className="px-2 py-1 text-xs bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 rounded-md border border-red-200 dark:border-red-800/40">{s}</span>
                           ))}
-                          {skillGap.missing_skills.length === 0 && <span className="text-xs text-emerald-500">All skills matched! 🎉</span>}
+                          {skillGap.missing_skills.length === 0 && <span className="text-xs text-emerald-500">All skills matched!</span>}
                         </div>
                       </div>
                     </div>
@@ -634,69 +613,6 @@ export const CandidateInsights: React.FC = () => {
                 )}
               </div>
 
-              {/* Interview Questions */}
-              <div className="card-base p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="section-header flex items-center gap-2">
-                    <QuestionAnswer style={{ fontSize: 20 }} className="text-indigo-500" /> Interview Questions
-                  </h2>
-                  <button
-                    onClick={handleInterviewQuestions}
-                    disabled={questionsLoading}
-                    className="text-xs px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-lg hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors disabled:opacity-50"
-                  >
-                    {questionsLoading ? 'Generating...' : interviewQuestions ? 'Regenerate' : 'Generate Questions'}
-                  </button>
-                </div>
-
-                {interviewQuestions ? (
-                  <div className="space-y-4">
-                    {/* Technical */}
-                    {interviewQuestions.technical_questions.length > 0 && (
-                      <div>
-                        <h4 className="text-xs font-semibold text-blue-600 uppercase mb-2">Technical Questions</h4>
-                        <ol className="space-y-2">
-                          {interviewQuestions.technical_questions.map((q, i) => (
-                            <li key={i} className="p-3 rounded-lg bg-gray-50 dark:bg-[#111111] text-sm text-gray-700 dark:text-zinc-300">
-                              <span className="text-blue-500 font-bold mr-2">{i + 1}.</span> {q}
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-                    {/* Behavioral */}
-                    {interviewQuestions.behavioral_questions.length > 0 && (
-                      <div>
-                        <h4 className="text-xs font-semibold text-emerald-600 uppercase mb-2">Behavioral Questions</h4>
-                        <ol className="space-y-2">
-                          {interviewQuestions.behavioral_questions.map((q, i) => (
-                            <li key={i} className="p-3 rounded-lg bg-gray-50 dark:bg-[#111111] text-sm text-gray-700 dark:text-zinc-300">
-                              <span className="text-emerald-500 font-bold mr-2">{i + 1}.</span> {q}
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-                    {/* Role-Specific */}
-                    {interviewQuestions.role_specific_questions.length > 0 && (
-                      <div>
-                        <h4 className="text-xs font-semibold text-purple-600 uppercase mb-2">Role-Specific Questions</h4>
-                        <ol className="space-y-2">
-                          {interviewQuestions.role_specific_questions.map((q, i) => (
-                            <li key={i} className="p-3 rounded-lg bg-gray-50 dark:bg-[#111111] text-sm text-gray-700 dark:text-zinc-300">
-                              <span className="text-purple-500 font-bold mr-2">{i + 1}.</span> {q}
-                            </li>
-                          ))}
-                        </ol>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-400 dark:text-zinc-500 italic">
-                    Click "Generate Questions" to get AI-generated interview questions tailored to this resume.
-                  </p>
-                )}
-              </div>
 
               {/* Role Recommendations */}
               <div className="card-base p-6">

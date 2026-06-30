@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@context/AuthContext';
+import { Person, Business } from '@mui/icons-material';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -98,7 +99,7 @@ export const RegisterPage: React.FC = () => {
               <div className="p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 transition-all duration-300 hover:shadow-md">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-2xl">👤</span>
+                    <Person style={{ fontSize: 28 }} className="text-emerald-600" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 dark:text-white">Candidate</p>
@@ -109,7 +110,7 @@ export const RegisterPage: React.FC = () => {
               <div className="p-5 rounded-2xl border border-gray-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 transition-all duration-300 hover:shadow-md">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-2xl">🏢</span>
+                    <Business style={{ fontSize: 28 }} className="text-blue-600" />
                   </div>
                   <div>
                     <p className="text-sm font-bold text-gray-900 dark:text-white">Recruiter</p>

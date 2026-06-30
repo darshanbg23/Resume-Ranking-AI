@@ -15,7 +15,7 @@ import CandidateJobDetails from '@pages/candidate/JobDetails';
 import CandidateApplications from '@pages/candidate/Applications';
 import CandidateResume from '@pages/candidate/Resume';
 import CandidateInsights from '@pages/candidate/Insights';
-import CandidateInterviews from '@pages/candidate/Interviews';
+
 import CandidateSettings from '@pages/candidate/Settings';
 import CandidateProfile from '@pages/candidate/Profile';
 import CandidateNotifications from '@pages/candidate/Notifications';
@@ -27,7 +27,7 @@ import RecruiterCreateJob from '@pages/recruiter/CreateJob';
 import RecruiterCandidates from '@pages/recruiter/Candidates';
 import RecruiterScreening from '@pages/recruiter/Screening';
 import RecruiterRankings from '@pages/recruiter/Rankings';
-import RecruiterInterviews from '@pages/recruiter/Interviews';
+
 import RecruiterProfile from '@pages/recruiter/Profile';
 import RecruiterAnalytics from '@pages/recruiter/Analytics';
 
@@ -81,7 +81,7 @@ const router = createBrowserRouter([
       { path: '/candidate/applications', element: <CandidateApplications /> },
       { path: '/candidate/resume', element: <CandidateResume /> },
       { path: '/candidate/insights', element: <CandidateInsights /> },
-      { path: '/candidate/interviews', element: <CandidateInterviews /> },
+
       { path: '/candidate/notifications', element: <CandidateNotifications /> },
       { path: '/candidate/settings', element: <CandidateSettings /> },
       { path: '/candidate/profile', element: <CandidateProfile /> },
@@ -98,7 +98,7 @@ const router = createBrowserRouter([
       { path: '/recruiter/candidates', element: <RecruiterCandidates /> },
       { path: '/recruiter/screening', element: <RecruiterScreening /> },
       { path: '/recruiter/rankings', element: <RecruiterRankings /> },
-      { path: '/recruiter/interviews', element: <RecruiterInterviews /> },
+
       { path: '/recruiter/analytics', element: <RecruiterAnalytics /> },
       { path: '/recruiter/profile', element: <RecruiterProfile /> },
     ],

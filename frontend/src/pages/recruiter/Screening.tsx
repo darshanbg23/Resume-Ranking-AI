@@ -65,7 +65,7 @@ export const RecruiterScreening: React.FC = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await apiClient.get('/jobs/');
+        const res = await apiClient.get('/jobs/my/');
         const jobData = res.data?.data || res.data || [];
         setJobs(Array.isArray(jobData) ? jobData : []);
       } catch (err) {
