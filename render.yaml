@@ -31,8 +31,6 @@ services:
           property: connectionString
       - key: ENVIRONMENT
         value: production
-      - key: PYTHON_VERSION
-        value: "3.11.6"
 
   # ── Frontend (React/Vite Static Site) ─────────────────────
   - type: web
