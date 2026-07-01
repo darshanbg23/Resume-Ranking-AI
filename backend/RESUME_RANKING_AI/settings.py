@@ -48,6 +48,24 @@ ALLOWED_HOSTS += [".onrender.com"]
 
 
 # =============================================================================
+# REVERSE PROXY CONFIGURATION (Render, Heroku, etc.)
+# =============================================================================
+
+# Render terminates TLS at the load balancer and forwards to Gunicorn over
+# plain HTTP. It sends the original protocol in X-Forwarded-Proto and the
+# original public hostname in X-Forwarded-Host.
+
+# Trust the X-Forwarded-Proto header so Django knows the request was HTTPS.
+# Without this, request.is_secure() always returns False behind the proxy.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+# Read Host from X-Forwarded-Host instead of the raw HTTP_HOST header.
+# Render's internal Host header may be an internal IP or service name that
+# is NOT in ALLOWED_HOSTS — causing a silent 400 response.
+USE_X_FORWARDED_HOST = True
+
+
+# =============================================================================
 # CSRF CONFIGURATION
 # =============================================================================
 
